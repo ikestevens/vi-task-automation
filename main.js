@@ -41,7 +41,7 @@ new p5((p) => {
     /* ---------- Preload ---------- */
     p.preload = () => {
         p.loadJSON("vi_auto_data.json",
-            d => automation = d.automation_percentage / 100,
+            d => automation = d.automation_percentage,
             () => console.warn("vi_auto_data.json not found; using 60 %")
         );
 
