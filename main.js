@@ -45,8 +45,6 @@ new p5((p) => {
             () => console.warn("vi_auto_data.json not found; using 60 %")
         );
 
-        console.log(d)
-
         // manifest lists available food JSON files
         p.loadJSON("foods/manifest.json", list => {
             list.forEach(file => {
