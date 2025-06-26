@@ -3,7 +3,7 @@
 Display for VI Task Automation
 
 ## What is this ? ##
-This display shows our VI Task Automation (how many new vendor items we are automatically categorizing to food). It's a p5 js display showing the automation number.
+This display shows our VI Task Automation percentage in a fun way.
 
 ## How does it work ? ##
 - automation number is shown in the top right
