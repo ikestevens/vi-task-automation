@@ -17,10 +17,10 @@ This display shows our VI Task Automation (how many new vendor items we are auto
 ## How to Add Food Images ##
 1. Go to pixilart.com/draw
 2. Add the four colors used in this project
-   1. (255, 206,  84),   // 1 yellow
-   2. (132, 165, 157),   // 2 teal
-   3. (162, 210, 255),   // 3 blue
-   4. (242, 132, 130)    // 4 coral
+   1. #D4C454   // 1 wall yellow
+   2. #447604   // 2 avocado green
+   3. #208AAE   // 3 blue
+   4. #F28482   // 4 coral
 3. Create a 40 x 40 pixel canvas
 4. Draw a food
 5. Save as a png
