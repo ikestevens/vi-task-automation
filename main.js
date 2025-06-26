@@ -273,7 +273,7 @@ new p5((p) => {
 
         // === Visual params ===
         let alpha = 100;
-        let blur  = 14;
+        let blur  = 18;
 
         if (isFinal) {
             const fadeDuration = 500; // ms
