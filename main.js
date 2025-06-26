@@ -16,10 +16,10 @@ new p5((p) => {
     const transMS = 2000, holdMS = 4000;
 
     const palette = [
-        p.color(255, 206,  84),   // 1 yellow
-        p.color(132, 165, 157),   // 2 teal
-        p.color(162, 210, 255),   // 3 blue
-        p.color(242, 132, 130)    // 4 coral
+        p.color('#D4C454'),   // 1 wall yellow
+        p.color('#447604'),   // 2 avocado green
+        p.color('#208AAE'),   // 3 blue
+        p.color('#F28482')    // 4 coral
     ];
 
     /* ---------- Globals ---------- */
@@ -214,33 +214,86 @@ new p5((p) => {
 
         if (t >= 1 && p.millis() - stageStart > transMS + holdMS) nextStage();
         drawPanel();
+        drawFoodPanel();
     };
 
     /* ---------- Panel ---------- */
     function drawPanel() {
-        const pad   = 14;
+        const pad   = 20;
         const label = "VI Task Automation";
         const pct   = `${(automation * 100).toFixed(1)}%`;
-        const food  = `Food: ${currentFood}`;
 
-        p.textSize(18);
-        const w = Math.max(p.textWidth(label), p.textWidth(pct), p.textWidth(food)) + pad * 2;
-        const h = stages[stageIdx] === "final" ? 90 : 70;
+        // Calculate width based on the widest line
+        p.textSize(22);
+        const titleWidth = p.textWidth(label);
+        p.textSize(36);
+        const pctWidth = p.textWidth(pct);
+        const w = Math.max(titleWidth, pctWidth) + pad * 2;
+
+        const h = 100; // Reduced height since we only have two lines
         const x = p.width - w - pad;
         const y = pad;
 
-        p.noStroke(); p.fill(80); p.rect(x, y, w, h, 10);
+        // Background panel
+        p.noStroke();
+        p.fill(0, 180);
+        p.rect(x, y, w, h, 14);
 
         p.textAlign(p.LEFT, p.CENTER);
-        p.textStyle(p.BOLD); p.fill(255); p.textSize(18);
-        p.text(label, x + pad, y + h * 0.25);
+        p.textStyle(p.BOLD);
+        p.fill(255);
 
-        p.textSize(28); p.fill(palette[1]);
-        p.text(pct, x + pad, y + h * 0.60);
+        // Line 1: Title (left aligned)
+        p.textSize(22);
+        p.text(label, x + pad, y + h * 0.3);
 
-        if (stages[stageIdx] === "final") {
-            p.textSize(14); p.fill(200);
-            p.text(food, x + pad, y + h * 0.85);
+        // Line 2: Percentage (center aligned)
+        p.textSize(36);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text(pct, x + w / 2, y + h * 0.72);
+    }
+
+    function drawFoodPanel() {
+        const pad     = 20;
+        const food    = currentFood;
+        const fullTxt = food;
+
+        // Stage 0 & 1: skip entirely
+        if (stageIdx < 2) return;
+
+        const isCloser = stageIdx === 2;
+        const isFinal  = stageIdx === 3;
+        const h = 80;
+
+        // Text setup
+        p.textSize(22);
+        const w = p.textWidth(fullTxt) + pad * 2;
+        const x = pad;
+        const y = p.height - h - pad;
+
+        // === Visual params ===
+        let alpha = 100;
+        let blur  = 14;
+
+        if (isFinal) {
+            const fadeDuration = 500; // ms
+            const t = p.constrain((p.millis() - stageStart) / fadeDuration, 0, 1);
+            alpha = p.lerp(100, 255, t);
+            blur  = p.lerp(4, 0, t);
         }
+
+        // Panel background
+        p.noStroke();
+        p.fill(0, alpha * 0.8);  // Panel stays semi-transparent
+        p.rect(x, y, w, h, 14);
+
+        // Text
+        p.textAlign(p.LEFT, p.CENTER);
+        p.textStyle(p.BOLD);
+        p.textSize(22);
+        p.drawingContext.filter = `blur(${blur}px)`;
+        p.fill(255, alpha);
+        p.text(fullTxt, x + pad, y + h / 2);
+        p.drawingContext.filter = 'none'; // Reset after draw
     }
 });
