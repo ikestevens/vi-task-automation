@@ -1,4 +1,4 @@
-# Vi Task Automation Display
+# VI Task Automation Display
 
 Display for VI Task Automation
 
