@@ -27,6 +27,8 @@ new p5((p) => {
 
     const foodFiles = [];            // ["banana.json", "apple.json", ...]
     const foodData  = new Map();     // filename -> rawTemplate array
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     let currentFood = "";            // filename w/o .json
     let rawTemplate = null;
 
@@ -151,7 +153,7 @@ new p5((p) => {
 
     /* ---------- Stage logic ---------- */
     function setStage(name) {
-        console.log(`Stage: ${name}`);
+        console.log(`Stage: ${name}, Food: ${currentFood}`);
         if (name === "random") {
             assignAll(() =>
                 Math.random() < automation ? p.random(palette) : null);
@@ -258,42 +260,44 @@ new p5((p) => {
         const food    = currentFood;
         const fullTxt = food;
 
-        // Stage 0 & 1: skip entirely
         if (stageIdx < 2) return;
 
-        const isCloser = stageIdx === 2;
-        const isFinal  = stageIdx === 3;
+        const isFinal = stageIdx === 3;
         const h = 80;
 
-        // Text setup
+        const fadeDuration = 500;
+        const t = p.constrain((p.millis() - stageStart) / fadeDuration, 0, 1);
+
+        let alpha = isFinal ? p.lerp(100, 255, t) : 100;
+        let blur  = isFinal ? p.lerp(4, 0, t) : 18;
+
         p.textSize(22);
         const w = p.textWidth(fullTxt) + pad * 2;
         const x = pad;
         const y = p.height - h - pad;
 
-        // === Visual params ===
-        let alpha = 100;
-        let blur  = 18;
-
-        if (isFinal) {
-            const fadeDuration = 500; // ms
-            const t = p.constrain((p.millis() - stageStart) / fadeDuration, 0, 1);
-            alpha = p.lerp(100, 255, t);
-            blur  = p.lerp(4, 0, t);
-        }
-
-        // Panel background
+        // Always draw panel
         p.noStroke();
-        p.fill(0, alpha * 0.8);  // Panel stays semi-transparent
+        p.fill(0, alpha * 0.8);
         p.rect(x, y, w, h, 14);
+
+        // During earlier stages, skip text entirely on Safari/mobile
+        if (!isFinal && (isMobile || isSafari)) return;
 
         // Text
         p.textAlign(p.LEFT, p.CENTER);
         p.textStyle(p.BOLD);
-        p.textSize(22);
-        p.drawingContext.filter = `blur(${blur}px)`;
-        p.fill(255, alpha);
-        p.text(fullTxt, x + pad, y + h / 2);
-        p.drawingContext.filter = 'none'; // Reset after draw
+
+        if (!isFinal) {
+            // Normal blur path for desktop Chrome/Firefox
+            p.drawingContext.filter = `blur(${blur}px)`;
+            p.fill(255, alpha);
+            p.text(fullTxt, x + pad, y + h / 2);
+            p.drawingContext.filter = 'none';
+        } else {
+            // Final stage – draw clean text
+            p.fill(255, alpha);
+            p.text(fullTxt, x + pad, y + h / 2);
+        }
     }
 });
