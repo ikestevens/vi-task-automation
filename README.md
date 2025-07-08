@@ -23,9 +23,9 @@ This display shows our VI Task Automation percentage in a fun way.
    4. #F28482   // 4 coral
 3. Create a 40 x 40 pixel canvas
 4. Draw a food
-5. Save as a png
+5. Save as a png and put it in the food_png folder
 6. Use the convert_image.py script to convert it to a grid
-   - `python convert_image.py coffee.png`
+   - `python convert_image.py`
 7. Push the new json and manifest change to the branch
 
 

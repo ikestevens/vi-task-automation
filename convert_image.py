@@ -12,12 +12,18 @@ from pathlib import Path
 from PIL import Image
 
 # Palette (R,G,B) in order → digit 1-4
-PALETTE = [
-    (212, 196,  84),   # 1 wall yellow (#D4C454)
-    ( 68, 118,   4),   # 2 avocado green (#447604)
-    ( 32, 138, 174),   # 3 blue (#208AAE)
-    (242, 132, 130)    # 4 coral (#F28482)
+def hex_to_rgb(hex_color):
+    hex_color = hex_color.lstrip("#")
+    return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+
+PALETTE_HEX = [
+    "#D4C454",  # 1 wall yellow
+    "#447604",  # 2 avocado green
+    "#208AAE",  # 3 blue
+    "#F28482",  # 4 coral
 ]
+
+PALETTE = [hex_to_rgb(h) for h in PALETTE_HEX]
 
 FOODS_DIR = Path("foods")
 PNG_DIR = Path("food_png")
@@ -56,18 +62,11 @@ def update_manifest(manifest):
     print(f"📘 Updated manifest with {len(manifest)} entries")
 
 def main():
-    manifest = load_manifest()
-    already_converted = set(manifest)
-
     png_files = sorted(PNG_DIR.glob("*.png"))
-    new_files = []
+    new_manifest = []
 
     for png_path in png_files:
         json_name = png_path.stem + ".json"
-        if json_name in already_converted:
-            print(f"Skipping {png_path.name} (already in manifest)")
-            continue
-
         try:
             grid = png_to_grid(png_path)
         except Exception as e:
@@ -76,15 +75,11 @@ def main():
 
         json_path = FOODS_DIR / json_name
         save_json_grid(grid, json_path)
-        new_files.append(json_name)
+        new_manifest.append(json_name)
 
-    if new_files:
-        manifest.extend(new_files)
-        update_manifest(manifest)
-        added = ', '.join(name.removesuffix('.json') for name in new_files)
-        print(f"Added: {added}")
-    else:
-        print("No new images to convert.")
+    update_manifest(new_manifest)
+    added = ', '.join(name.removesuffix('.json') for name in new_manifest)
+    print(f"Added: {added}")
 
 if __name__ == "__main__":
     main()
