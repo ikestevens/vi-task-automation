@@ -10,12 +10,12 @@ import sys, os, json
 from pathlib import Path
 from PIL import Image
 
-# Exact palette (R,G,B) in order → digit 1-4
+# Updated palette (R,G,B) in order → digit 1-4
 PALETTE = [
-    (255, 206,  84),   # 1 yellow
-    (132, 165, 157),   # 2 teal
-    (162, 210, 255),   # 3 blue
-    (242, 132, 130)    # 4 coral
+    (212, 196,  84),   # 1 wall yellow (#D4C454)
+    ( 68, 118,   4),   # 2 avocado green (#447604)
+    ( 32, 138, 174),   # 3 blue (#208AAE)
+    (242, 132, 130)    # 4 coral (#F28482)
 ]
 
 FOODS_DIR      = Path("foods")
