@@ -28,4 +28,12 @@ This display shows our VI Task Automation percentage in a fun way.
    - `python convert_image.py`
 7. Push the new json, new png and manifest change to the branch
 
+## Testing Locally ##
+Run `npx serve .` to run locally.
 
+
+If you want to test a specific food, enter
+
+`window.overrideFood = "wayne cake.json";`  // or any of the jsons
+
+in the Console of dev tools to override the selected image

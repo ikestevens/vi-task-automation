@@ -10,6 +10,8 @@
       A new food template is chosen every full cycle.
 */
 
+window.overrideFood = null;
+
 new p5((p) => {
     /* ---------- Config ---------- */
     const stages  = ["random", "slight", "closer", "final"];
@@ -153,6 +155,14 @@ new p5((p) => {
 
     /* ---------- Stage logic ---------- */
     function setStage(name) {
+        // Apply override dynamically
+        if (window.overrideFood && foodData.has(window.overrideFood)) {
+            currentFood = window.overrideFood.replace(".json","");
+            rawTemplate = foodData.get(window.overrideFood);
+            buildTemplate(rawTemplate);
+            console.log("Override applied:", currentFood);
+            window.overrideFood = null; // optional: clear after use
+        }
         console.log(`Stage: ${name}, Food: ${currentFood}`);
         if (name === "random") {
             assignAll(() =>
@@ -187,8 +197,15 @@ new p5((p) => {
     }
 
     function pickNewFood() {
-        if (foodFiles.length === 0) return;
-        const next = p.random(foodFiles);
+        let next;
+
+        if (window.overrideFood && foodData.has(window.overrideFood)) {
+            next = window.overrideFood;             // use override if set
+            console.log("Food overridden via DevTools:", next);
+        } else {
+            next = p.random(foodFiles);             // normal random behavior
+        }
+
         currentFood = next.replace(".json", "");
         rawTemplate = foodData.get(next);
         buildTemplate(rawTemplate);
@@ -203,6 +220,16 @@ new p5((p) => {
 
     /* ---------- Draw loop ---------- */
     p.draw = () => {
+        // Check for DevTools override mid-cycle
+        if (window.overrideFood && foodData.has(window.overrideFood)) {
+            currentFood = window.overrideFood.replace(".json", "");
+            rawTemplate = foodData.get(window.overrideFood);
+            buildTemplate(rawTemplate);
+            setStage(stages[stageIdx]);  // reassign current stage with new food
+            console.log("Override applied mid-cycle:", currentFood);
+            window.overrideFood = null;  // optional: clear after use
+        }
+
         p.background(240);
 
         const t  = p.constrain((p.millis() - stageStart) / transMS, 0, 1);
